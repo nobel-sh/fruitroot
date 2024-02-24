@@ -1,0 +1,88 @@
+*{
+    font-family: 'Martian Mono', monospace;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5; /* Light mode background color */
+    color: #333; /* Light mode text color */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    padding: 20px;
+    background-color: #fff; /* Light mode header background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center; /* Center align the header */
+}
+
+main {
+    padding: 20px;
+}
+
+article {
+    background-color: #fff; /* Light mode article background color */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff; /* Light mode footer background color */
+}
+
+/* Styles for the post section */
+.post {
+    background-color: #fff; /* Light mode post background color */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+}
+
+.post h2{
+    margin-bottom: 20px;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #333; /* Dark mode background color */
+    color: #fff; /* Dark mode text color */
+}
+
+body.dark-mode header,
+body.dark-mode article,
+body.dark-mode footer {
+    background-color: #444; /* Dark mode background color for header, article, and footer */
+}
+
+#toggleMode {
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: #007bff; /* Light mode toggle button background color */
+    color: #fff; /* Light mode toggle button text color */
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#toggleMode:hover {
+    background-color: #0056b3; /* Light mode toggle button background color on hover */
+}
+
+body.dark-mode #toggleMode {
+    background-color: #17a2b8; /* Dark mode toggle button background color */
+}

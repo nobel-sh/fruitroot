@@ -1,4 +1,10 @@
-module MD where
+module Parser(
+        pDocument
+        , Elem(Paragraph,Header)
+        , Inline(Emph,Strong,Literal)
+        , Inlines
+        , Level
+             )where
 
 import Text.Parsec
 import Text.Parsec.String
@@ -31,6 +37,7 @@ pElem = choice [
           , pParagraph
         ]
 
+pDocument :: Parser Document
 pDocument = manyTill pElem eof
 
 pParagraph :: Parser Elem
