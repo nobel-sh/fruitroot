@@ -1,5 +1,6 @@
 module Parser(
         pDocument
+        , pList
         , Elem(Paragraph,Header)
         , Inline(Emph,Strong,Literal)
         , Inlines
@@ -12,6 +13,10 @@ import Text.Parsec.String
 data Elem =
         Paragraph Inlines
         | Header Level Inlines
+        | List ListCont
+        deriving (Eq, Show)
+
+data ListCont = Numbered Int Elem | Bulleted Elem
         deriving (Eq, Show)
 
 data  Inline =
@@ -34,6 +39,7 @@ pInline = choice[
 pElem :: Parser Elem
 pElem = choice [
           try pHeading
+          , try pList
           , pParagraph
         ]
 
@@ -45,6 +51,27 @@ pParagraph = do
   content <- manyTill pInline endOfLine
   return $ Paragraph content
 
+pList :: Parser Elem
+pList = do
+  listCont <- try pNumberedList <|> pBulletedList
+  return $ List listCont
+
+pNumberedList :: Parser ListCont
+pNumberedList = do
+  idx <- many1 digit
+  _   <- char '.'
+  _   <- spaces
+  content <- pParagraph
+  return $ Numbered (read idx) content
+
+pBulletedList :: Parser ListCont
+pBulletedList = do
+  _ <- oneOf "*-"
+  _ <- spaces
+  content <- pParagraph
+  return $ Bulleted content
+
+
 pHeading :: Parser Elem
 pHeading = do
   level <- length <$> many1 (char '#')
@@ -55,7 +82,7 @@ pHeading = do
 
 pLiteral :: Parser Inline
 pLiteral = do
-  lit <- manyTill anyChar (lookAhead (oneOf "\n*_"))
+  lit <- manyTill anyChar (lookAhead (oneOf "\n*-"))
   return $ Literal lit
 
 pStrong :: Parser Inline
