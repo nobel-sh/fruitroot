@@ -14,7 +14,7 @@ import Text.Parsec.String
 data Elem =
         Paragraph Inlines
         | Header Level Inlines
-        | List ListCont
+        | List [ListCont]
         deriving (Eq, Show)
 
 data ListCont = Numbered Int Elem | Bulleted Elem
@@ -54,8 +54,11 @@ pParagraph = do
 
 pList :: Parser Elem
 pList = do
-  listCont <- try pNumberedList <|> pBulletedList
-  return $ List listCont
+          lists <- many1 pListCont
+          return $ List lists
+
+pListCont :: Parser ListCont
+pListCont = try pNumberedList <|> try pBulletedList
 
 pNumberedList :: Parser ListCont
 pNumberedList = do

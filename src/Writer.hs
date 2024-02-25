@@ -2,6 +2,8 @@
 module Writer(
   makeTitle
   , genHtml
+  , writeList
+  , htmlBlock
              ) where
 
 import Text.RawString.QQ
@@ -41,15 +43,24 @@ htmlBlock (Header l content)  = "<h"<>show l<>">"
                           <> htmlInlines content
                           <> "</h"<>show l <>">"
 
-htmlBlock (List content)  = writeList content
+htmlBlock (List contents)  =
+            case head contents of
+              (Numbered _  _) -> "<ol>\n"
+                                 <> writeListCont contents
+                                 <> "</ol>"
+              (Bulleted _)    -> "<ul>\n"
+                                 <> writeListCont contents
+                                 <> "</ul>"
 
-writeList (Numbered _ content) = "<ol> <li>"
-                                 <> htmlBlock content
-                                 <> "</li> </ol>"
 
-writeList (Bulleted content) = "<ul> <li>"
-                                 <> htmlBlock content
-                                 <> "</li> </ul>"
+writeListCont [] = ""
+writeListCont (x:xs) = "<li>"
+                       <> writeList x
+                       <> "</li>\n"
+                       <> writeListCont xs
+
+writeList (Numbered _ content) = htmlBlock content
+writeList (Bulleted content)   = htmlBlock content
 
 htmlInlines [] = ""
 htmlInlines (x:xs) = htmlInline x <> htmlInlines xs
