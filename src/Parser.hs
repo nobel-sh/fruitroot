@@ -1,9 +1,10 @@
 module Parser(
         pDocument
         , pList
-        , Elem(Paragraph,Header)
-        , Inline(Emph,Strong,Literal)
+        , Elem(Paragraph, Header, List)
+        , Inline(Emph, Strong, Literal)
         , Inlines
+        , ListCont(Numbered, Bulleted)
         , Level
              )where
 

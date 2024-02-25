@@ -37,11 +37,19 @@ makeTitle (Header 1  content) = "<header>"
                         <> "</header>"
 
 htmlBlock (Paragraph content) = "<p>" <> htmlInlines content<> "</p>"
-
 htmlBlock (Header l content)  = "<h"<>show l<>">"
                           <> htmlInlines content
                           <> "</h"<>show l <>">"
 
+htmlBlock (List content)  = writeList content
+
+writeList (Numbered _ content) = "<ol> <li>"
+                                 <> htmlBlock content
+                                 <> "</li> </ol>"
+
+writeList (Bulleted content) = "<ul> <li>"
+                                 <> htmlBlock content
+                                 <> "</li> </ul>"
 
 htmlInlines [] = ""
 htmlInlines (x:xs) = htmlInline x <> htmlInlines xs
