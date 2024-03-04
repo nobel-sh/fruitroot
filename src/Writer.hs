@@ -1,4 +1,5 @@
 {-# LANGUAGE QuasiQuotes #-}
+
 module Writer(
   makeTitle
   , genHtml
@@ -39,6 +40,7 @@ makeTitle (Header 1  content) = "<header>"
                         <> "</header>"
 
 htmlBlock (Paragraph content) = "<p>" <> htmlInlines content<> "</p>"
+htmlBlock (Code content) = "<code>" <> htmlInlines content<> "</code>"
 htmlBlock (Header l content)  = "<h"<>show l<>">"
                           <> htmlInlines content
                           <> "</h"<>show l <>">"
