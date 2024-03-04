@@ -1,7 +1,7 @@
 module Parser(
         pDocument
-        , pCode
-        , Elem(Paragraph, Header, List)
+        , pQuote
+        , Elem(Paragraph, Header, List, Code, Quote)
         , Inline(Emph, Strong, Literal)
         , Inlines
         , ListCont(Numbered, Bulleted)
@@ -15,7 +15,8 @@ data Elem =
         Paragraph Inlines
         | Header Level Inlines
         | List [ListCont]
-        | Code Inlines
+        | Code (Maybe Language) Inlines
+        | Quote [Elem]
         deriving (Eq, Show)
 
 data ListCont = Numbered Int Elem | Bulleted Elem
@@ -29,6 +30,7 @@ data  Inline =
 
 type Inlines = [Inline]
 
+type Language = String
 type Document = [Elem]
 type Level = Int
 
@@ -43,17 +45,31 @@ pElem = choice [
           try pHeading
           , try pList
           , try pCode
+          , try pQuoteBlock
           , pParagraph
         ]
 
 pDocument :: Parser Document
 pDocument = manyTill pElem eof
 
+pQuoteBlock :: Parser Elem
+pQuoteBlock = do
+  contents <- many1 pQuote
+  return $ Quote contents
+
+pQuote :: Parser Elem
+pQuote = do
+  char '>' *> spaces
+  content <- pParagraph
+  return content
+
 pCode :: Parser Elem
 pCode = do
-  _ <- string "```" <* endOfLine
+  _ <- string "```"
+  lang <- optionMaybe (try (char ' ' *> many1 (noneOf "\n")))
+  _ <- endOfLine
   content <- manyTill anyChar (string "\n```" <* endOfLine)
-  return $ Code [(Literal content)]
+  return $ Code lang [(Literal content)]
 
 pParagraph :: Parser Elem
 pParagraph = do

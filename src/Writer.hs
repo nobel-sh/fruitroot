@@ -9,6 +9,7 @@ module Writer(
 
 import Text.RawString.QQ
 import Parser
+import Data.List(intercalate)
 
 genHtml heading content = 
             "<html>\n"
@@ -39,8 +40,18 @@ makeTitle (Header 1  content) = "<header>"
                         <> htmlBlock (Header 1 content)
                         <> "</header>"
 
-htmlBlock (Paragraph content) = "<p>" <> htmlInlines content<> "</p>"
-htmlBlock (Code content) = "<code>" <> htmlInlines content<> "</code>"
+htmlBlock (Paragraph content) = "<p>"
+                                <> htmlInlines content
+                                <> "</p>"
+
+-- TODO: Maybe add sytax highlighthing for popular langs?
+htmlBlock (Code _ content) = "<pre> <code>"
+                             <> htmlInlines content
+                             <> "</code>"
+htmlBlock (Quote contents) = "<blockquote>\n"
+                            <> intercalate "\n" (map htmlBlock contents)
+                            <> "\n</blockquote>"
+
 htmlBlock (Header l content)  = "<h"<>show l<>">"
                           <> htmlInlines content
                           <> "</h"<>show l <>">"
@@ -71,6 +82,7 @@ htmlInline (Literal content) = content
 htmlInline (Emph    content) = "<em>"
                         <> htmlInlines content
                         <> "</em>"
+
 htmlInline (Strong  content) = "<strong>"
                         <> htmlInlines content
                         <> "</strong>"
