@@ -1,6 +1,6 @@
 module Parser(
         pDocument
-        , pList
+        , pCode
         , Elem(Paragraph, Header, List)
         , Inline(Emph, Strong, Literal)
         , Inlines
@@ -15,6 +15,7 @@ data Elem =
         Paragraph Inlines
         | Header Level Inlines
         | List [ListCont]
+        | Code Inlines
         deriving (Eq, Show)
 
 data ListCont = Numbered Int Elem | Bulleted Elem
@@ -41,11 +42,18 @@ pElem :: Parser Elem
 pElem = choice [
           try pHeading
           , try pList
+          , try pCode
           , pParagraph
         ]
 
 pDocument :: Parser Document
 pDocument = manyTill pElem eof
+
+pCode :: Parser Elem
+pCode = do
+  _ <- string "```" <* endOfLine
+  content <- manyTill anyChar (string "\n```" <* endOfLine)
+  return $ Code [(Literal content)]
 
 pParagraph :: Parser Elem
 pParagraph = do
