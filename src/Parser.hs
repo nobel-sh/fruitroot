@@ -1,6 +1,7 @@
 module Parser(
         pDocument
         , pQuote
+        , pMeta
         , Elem(Paragraph, Header, List, Code, Quote)
         , Inline(Emph, Strong, Literal)
         , Inlines
@@ -12,7 +13,8 @@ import Text.Parsec
 import Text.Parsec.String
 
 data Elem =
-        Paragraph Inlines
+        Meta [MetaElem]
+        | Paragraph Inlines
         | Header Level Inlines
         | List [ListCont]
         | Code (Maybe Language) Inlines
@@ -20,6 +22,9 @@ data Elem =
         deriving (Eq, Show)
 
 data ListCont = Numbered Int Elem | Bulleted Elem
+        deriving (Eq, Show)
+
+data MetaElem = MetaElem String String
         deriving (Eq, Show)
 
 data  Inline =
@@ -42,12 +47,35 @@ pInline = choice[
 
 pElem :: Parser Elem
 pElem = choice [
-          try pHeading
+          try pMeta
+          , try pHeading
           , try pList
           , try pCode
           , try pQuoteBlock
           , pParagraph
         ]
+
+
+-- {{
+--  title: "Hello"
+--  author: "World"
+-- }}
+
+pMeta :: Parser Elem
+pMeta = do
+  _ <- string "{{"
+  meta <- manyTill pMetaContent (string "}}")
+  return $ Meta meta
+
+pMetaContent :: Parser MetaElem
+pMetaContent = do
+  spaces
+  key <- manyTill anyChar (char ':')
+  spaces
+  _ <- char '"'
+  value <- manyTill anyChar (char '"')
+  _ <- newline
+  return $ MetaElem key value
 
 pDocument :: Parser Document
 pDocument = manyTill pElem eof
