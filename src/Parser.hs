@@ -11,9 +11,10 @@ module Parser(
 
 import Text.Parsec
 import Text.Parsec.String
+import Data.Maybe (catMaybes)
 
 data Elem =
-        Meta [MetaElem]
+        Meta MetaElem
         | Paragraph Inlines
         | Header Level Inlines
         | List [ListCont]
@@ -24,8 +25,11 @@ data Elem =
 data ListCont = Numbered Int Elem | Bulleted Elem
         deriving (Eq, Show)
 
-data MetaElem = MetaElem String String
-        deriving (Eq, Show)
+data MetaElem = MetaElem {
+  title :: String
+  , author :: String
+} deriving (Eq, Show)
+
 
 data  Inline =
         Emph Inlines
@@ -59,23 +63,29 @@ pElem = choice [
 -- {{
 --  title: "Hello"
 --  author: "World"
+--  date: "2024-01-01"
 -- }}
 
 pMeta :: Parser Elem
 pMeta = do
-  _ <- string "{{"
-  meta <- manyTill pMetaContent (string "}}")
-  return $ Meta meta
+  string "--{{"
+  spaces
+  title <- parseField "title"
+  spaces
+  author <- parseField "author"
+  spaces
+  string "}}--"
+  return $ Meta $ MetaElem title author
 
-pMetaContent :: Parser MetaElem
-pMetaContent = do
+parseField :: String -> Parser String
+parseField field = do
+  string field
   spaces
-  key <- manyTill anyChar (char ':')
+  char ':'
   spaces
-  _ <- char '"'
-  value <- manyTill anyChar (char '"')
-  _ <- newline
-  return $ MetaElem key value
+  value <- many1 (noneOf "\n")
+  return value
+
 
 pDocument :: Parser Document
 pDocument = manyTill pElem eof
