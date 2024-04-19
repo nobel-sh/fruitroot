@@ -11,8 +11,9 @@ main = do
   case result of
     Left err -> print err
     Right md -> do
-      let html = genHtml heading content
+      putStrLn $ show md
+      let html = genHtml metadata content
       writeFile "resource/gen.html" html
       putStrLn "Done !"
-      where heading = head md
-            content = tail md
+      where metadata = head md
+            content  = tail md

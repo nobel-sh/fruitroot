@@ -1,8 +1,6 @@
 module Parser(
         pDocument
-        , pQuote
-        , pMeta
-        , Elem(Paragraph, Header, List, Code, Quote)
+        , Elem(Meta, Paragraph, Header, List, Code, Quote)
         , Inline(Emph, Strong, Literal)
         , Inlines
         , ListCont(Numbered, Bulleted)
@@ -14,7 +12,7 @@ import Text.Parsec.String
 import Data.Maybe (catMaybes)
 
 data Elem =
-        Meta MetaElem
+        Meta String String
         | Paragraph Inlines
         | Header Level Inlines
         | List [ListCont]
@@ -24,11 +22,6 @@ data Elem =
 
 data ListCont = Numbered Int Elem | Bulleted Elem
         deriving (Eq, Show)
-
-data MetaElem = MetaElem {
-  title :: String
-  , author :: String
-} deriving (Eq, Show)
 
 
 data  Inline =
@@ -61,9 +54,9 @@ pElem = choice [
 
 
 -- {{
---  title: "Hello"
---  author: "World"
---  date: "2024-01-01"
+--  title: Hello
+--  author: World
+--  date: 2024-01-01
 -- }}
 
 pMeta :: Parser Elem
@@ -75,7 +68,7 @@ pMeta = do
   author <- parseField "author"
   spaces
   string "}}--"
-  return $ Meta $ MetaElem title author
+  return $ Meta title author
 
 parseField :: String -> Parser String
 parseField field = do
