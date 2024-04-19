@@ -14,18 +14,18 @@ import Data.List(intercalate)
 genHtml metadata content =
             "<html>\n"
             <> htmlHead metadata
-            <> "\n<body>"
+            <> "\n<body>\n"
             <> makeHeader metadata (head content)
             <> "\n<main> <article>\n"
             <> htmlBody (tail content)
             <> "\n</article> </main>\n"
             <> "\n</body>\n</html>"
 
-makeHeader (Meta _ author) (Header 1 content) = "<header>"
-                        <> htmlBlock (Header 1 content)
-                        <> "<h3> Author: " <> author <> "</h3> \n"
+makeHeader (Meta _ author) (Header 1 content) = "<header>\n"
+                        <> htmlBlock (Header 1 content) -- renders title
+                        <> htmlBlock (Header 3 author') -- renders author
                         <> "</header>"
-                        <> "\n"
+                        where author' = [Literal $ "Author: " <> author]
 
 headStatic = [r|
     <meta charset="UTF-8">
