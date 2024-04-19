@@ -15,12 +15,17 @@ genHtml metadata content =
             "<html>\n"
             <> htmlHead metadata
             <> "\n<body>"
-            <> makeTitle (head content)
-            <> makeAuthor metadata
+            <> makeHeader metadata (head content)
             <> "\n<main> <article>\n"
             <> htmlBody (tail content)
             <> "\n</article> </main>\n"
             <> "\n</body>\n</html>"
+
+makeHeader (Meta _ author) (Header 1 content) = "<header>"
+                        <> htmlBlock (Header 1 content)
+                        <> "<h3> Author: " <> author <> "</h3> \n"
+                        <> "</header>"
+                        <> "\n"
 
 headStatic = [r|
     <meta charset="UTF-8">
@@ -42,7 +47,6 @@ htmlHead (Meta title _)= "<head>"
 htmlBody [] = ""
 htmlBody (x:xs) = htmlBlock x <> "\n" <> htmlBody xs
 
-makeTitle :: Elem -> String
 makeTitle (Header 1  content) = "<header>"
                         <> htmlBlock (Header 1 content)
                         <> "</header>"
@@ -50,7 +54,7 @@ makeTitle (Header 1  content) = "<header>"
 
 makeTitle (_) = "" -- HACK: removes empty paragraphs that are on upon empty \n
 
-makeAuthor (Meta _ author) = "<h3>\n"
+makeAuthor (Meta _ author) = "<h3>"
                              <> "Author: "
                              <> author
                              <> "</h3>"

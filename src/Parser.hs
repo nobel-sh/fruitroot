@@ -23,7 +23,6 @@ data Elem =
 data ListCont = Numbered Int Elem | Bulleted Elem
         deriving (Eq, Show)
 
-
 data  Inline =
         Emph Inlines
         | Strong Inlines
@@ -105,7 +104,9 @@ pCode = do
 pParagraph :: Parser Elem
 pParagraph = do
   content <- manyTill pInline endOfLine
-  return $ Paragraph content
+  case content of
+    [] -> pElem
+    _  -> return $ Paragraph content
 
 pList :: Parser Elem
 pList = do
