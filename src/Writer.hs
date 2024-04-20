@@ -26,6 +26,7 @@ makeHeader (Meta _ author) (Header 1 content) = "<header>\n"
                         <> htmlBlock (Header 3 author') -- renders author
                         <> "</header>"
                         where author' = [Literal $ "Author: " <> author]
+makeHeader _ _ = ""
 
 headStatic = [r|
     <meta charset="UTF-8">
@@ -60,9 +61,11 @@ makeAuthor (Meta _ author) = "<h3>"
                              <> "</h3>"
                              <> "\n"
 
-htmlBlock (Paragraph content) = "<p>"
+htmlBlock (Newlines) = "" -- HACK: Skip newlines
+
+htmlBlock (Paragraph content) = "<span>"
                                 <> htmlInlines content
-                                <> "</p>"
+                                <> "</span>"
 
 -- TODO: Maybe add sytax highlighthing for popular langs?
 htmlBlock (Code _ content) = "<pre> <code>"

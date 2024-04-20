@@ -1,6 +1,6 @@
 module Parser(
         pDocument
-        , Elem(Meta, Paragraph, Header, List, Code, Quote)
+        , Elem(Meta, Paragraph, Header, List, Code, Quote, Newlines)
         , Inline(Emph, Strong, Literal)
         , Inlines
         , ListCont(Numbered, Bulleted)
@@ -9,7 +9,6 @@ module Parser(
 
 import Text.Parsec
 import Text.Parsec.String
-import Data.Maybe (catMaybes)
 
 data Elem =
         Meta String String
@@ -18,6 +17,7 @@ data Elem =
         | List [ListCont]
         | Code (Maybe Language) Inlines
         | Quote [Elem]
+        | Newlines
         deriving (Eq, Show)
 
 data ListCont = Numbered Int Elem | Bulleted Elem
@@ -43,7 +43,8 @@ pInline = choice[
 
 pElem :: Parser Elem
 pElem = choice [
-          try pMeta
+          try pDumbNewlines
+          , try pMeta
           , try pHeading
           , try pList
           , try pCode
@@ -51,12 +52,16 @@ pElem = choice [
           , pParagraph
         ]
 
+pDumbNewlines :: Parser Elem
+pDumbNewlines = do
+  _ <- many1 (char '\n')
+  return Newlines
 
--- {{
+-- --{{
 --  title: Hello
 --  author: World
 --  date: 2024-01-01
--- }}
+-- }}--
 
 pMeta :: Parser Elem
 pMeta = do
@@ -104,9 +109,7 @@ pCode = do
 pParagraph :: Parser Elem
 pParagraph = do
   content <- manyTill pInline endOfLine
-  case content of
-    [] -> pElem
-    _  -> return $ Paragraph content
+  return $ Paragraph content
 
 pList :: Parser Elem
 pList = do
