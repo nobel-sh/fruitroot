@@ -15,17 +15,20 @@ genHtml metadata content =
             "<html>\n"
             <> htmlHead metadata
             <> "\n<body>\n"
-            <> makeHeader metadata (head content)
+            <> makeHeader metadata content
             <> "\n<main> <article>\n"
             <> htmlBody (tail content)
             <> "\n</article> </main>\n"
             <> "\n</body>\n</html>"
 
-makeHeader (Meta _ author) (Header 1 content) = "<header>\n"
-                        <> htmlBlock (Header 1 content) -- renders title
+makeHeader (Meta _ author) content = "<header>\n"
+                        <> htmlBlock content' -- renders title
                         <> htmlBlock (Header 3 author') -- renders author
                         <> "</header>"
                         where author' = [Literal $ "Author: " <> author]
+                              content' = case head content of
+                                            Newlines -> head $ tail content
+                                            _ -> head content
 makeHeader _ _ = ""
 
 headStatic = [r|

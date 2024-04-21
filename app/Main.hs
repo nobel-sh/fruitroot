@@ -3,6 +3,7 @@ module Main (main) where
 import Parser
 import Writer
 import Text.Parsec.String
+import Utils
 
 main :: IO ()
 main = do
@@ -12,8 +13,9 @@ main = do
     Left err -> print err
     Right md -> do
       putStrLn $ show md
+      putStrLn $ show content
       let html = genHtml metadata content
       writeFile "resource/gen.html" html
       putStrLn "Done !"
       where metadata = head md
-            content  = tail md
+            content  = removeNewlines $ tail md
