@@ -2,6 +2,6 @@ module Utils(
     removeNewlines
 ) where
 
-import Parser
+import Definition
 
 removeNewlines = filter (\x -> x /= Newlines) 

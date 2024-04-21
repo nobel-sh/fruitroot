@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Parser
+import Definition
 import Writer
 import Text.Parsec.String
 import Utils

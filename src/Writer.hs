@@ -9,6 +9,7 @@ module Writer(
 
 import Text.RawString.QQ
 import Parser
+import Definition
 import Data.List(intercalate)
 
 genHtml metadata content =
