@@ -1,7 +1,7 @@
-module Utils(
-    removeNewlines
-) where
+module Utils
+  ( removeNewlines
+  ) where
 
-import Definition
+import           Definition
 
-removeNewlines = filter (\x -> x /= Newlines) 
+removeNewlines = filter (/= Newlines)

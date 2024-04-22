@@ -13,8 +13,8 @@ main = do
   case result of
     Left err -> print err
     Right md -> do
-      putStrLn $ show md
-      putStrLn $ show content
+      print md
+      print content
       let html = genHtml metadata content
       writeFile "resource/gen.html" html
       putStrLn "Done !"
