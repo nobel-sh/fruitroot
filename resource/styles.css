@@ -1,7 +1,6 @@
 *{
     font-family: 'Martian Mono', monospace;
     margin: 0;
-    font-weight: normal;
 }
 
 body {
@@ -18,7 +17,7 @@ header {
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding: 80px;
+    padding: 50px;
     gap: 8px;
 }
 
@@ -45,8 +44,12 @@ article {
     gap: 20px;
 }
 
+span {
+    text-align: justify;
+}
 article h2{
-    padding-top: 40px;
+    padding-top: 24px;
+    padding-bottom: 24px;
     font-weight: 600;
 }
 
@@ -54,16 +57,41 @@ article h2{
 footer {
     position: fixed;
     bottom: 0;
-    padding: 10px;
+    padding: 16px;
     text-align: center;
     background-color: #fff;
 }
 
 .post {
     background-color: #fff;
-    padding: 20px;
+    padding: 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: column;
+}
+
+.nav{
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: 10px;
+    padding-bottom: 0px;
+}
+
+.nav a{
+    text-decoration: none;
+    color: grey;
+    font-weight: bold;
+}
+
+code{
+    padding: 16px;
+    padding-top: 32px;
+    margin-top: 64px;
+    background-color: #747373;
+    color: rgb(252, 249, 249);
+    border-radius: 2px;
+    align-items: space-between;
 }

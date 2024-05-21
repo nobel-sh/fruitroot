@@ -5,6 +5,7 @@ module Writer
   , genHtml
   , writeList
   , htmlBlock
+  , makeNavbar
   ) where
 
 import           Data.List         (intercalate)
@@ -16,6 +17,7 @@ genHtml metadata content =
   "<html>\n" <>
   htmlHead metadata <>
   "\n<body>\n" <>
+  makeNavbar <>
   makeHeader metadata content <>
   "\n<main> <article>\n" <>
   htmlBody (tail content) <> "\n</article> </main>\n" <> "\n</body>\n</html>"
@@ -54,6 +56,13 @@ htmlBody (x:xs) = htmlBlock x <> "\n" <> htmlBody xs
 makeTitle (Header 1 content) =
   "<header>" <> htmlBlock (Header 1 content) <> "</header>" <> "\n"
 makeTitle _ = "" -- HACK: removes empty paragraphs that are on upon empty \n
+
+makeNavbar = "<div class=\"nav\">"
+            <> "<a href=\"#\" >Button 1</a>"
+            <> "<a href=\"#\" >Button 2</a>"
+            <> "<a href=\"#\" >Button 3</a>"
+            <> "<a href=\"#\" >Button 4</a>"
+            <> "</div>"
 
 makeAuthor (Meta _ author) = "<h3>" <> "Author: " <> author <> "</h3>" <> "\n"
 
